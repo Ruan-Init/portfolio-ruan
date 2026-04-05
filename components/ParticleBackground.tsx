@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
@@ -30,6 +29,11 @@ export default function ParticleBackground() {
     const colors = new Float32Array(count * 3);
     const sizes = new Float32Array(count);
 
+    // Store original positions for wave animation
+    const originalY = new Float32Array(count);
+    const phases = new Float32Array(count);
+    const speeds = new Float32Array(count);
+
     const colorA = new THREE.Color("#64FFDA");
     const colorB = new THREE.Color("#7B9CF7");
     const colorC = new THREE.Color("#1C2030");
@@ -39,6 +43,10 @@ export default function ParticleBackground() {
       positions[i3] = (Math.random() - 0.5) * 80;
       positions[i3 + 1] = (Math.random() - 0.5) * 80;
       positions[i3 + 2] = (Math.random() - 0.5) * 40;
+
+      originalY[i] = positions[i3 + 1];
+      phases[i] = Math.random() * Math.PI * 2;
+      speeds[i] = Math.random() * 0.5 + 0.3;
 
       const t = Math.random();
       const col = t < 0.3 ? colorA : t < 0.5 ? colorB : colorC;
@@ -65,9 +73,11 @@ export default function ParticleBackground() {
     const points = new THREE.Points(geo, mat);
     scene.add(points);
 
-    // Mouse parallax
+    // Mouse parallax (smooth lerp)
     let mouseX = 0;
     let mouseY = 0;
+    let smoothMouseX = 0;
+    let smoothMouseY = 0;
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
@@ -91,8 +101,30 @@ export default function ParticleBackground() {
       animId = requestAnimationFrame(animate);
       frame += 0.003;
 
-      points.rotation.y = frame * 0.05 + mouseX * 0.08;
-      points.rotation.x = Math.sin(frame * 0.3) * 0.05 + mouseY * 0.04;
+      // Smooth mouse interpolation
+      smoothMouseX += (mouseX - smoothMouseX) * 0.05;
+      smoothMouseY += (mouseY - smoothMouseY) * 0.05;
+
+      // Slow rotation
+      points.rotation.y = frame * 0.05 + smoothMouseX * 0.08;
+      points.rotation.x = Math.sin(frame * 0.3) * 0.05 + smoothMouseY * 0.04;
+
+      // Wave motion per particle using original Y positions
+      const pos = geo.attributes.position.array as Float32Array;
+      for (let i = 0; i < count; i++) {
+        const i3 = i * 3;
+        pos[i3 + 1] = originalY[i] + Math.sin(frame * speeds[i] + phases[i]) * 2.5;
+        pos[i3] += Math.cos(frame * 0.5 + phases[i]) * 0.002;
+      }
+      geo.attributes.position.needsUpdate = true;
+
+      // Pulsing opacity
+      mat.opacity = 0.55 + Math.sin(frame * 1.2) * 0.15;
+
+      // Camera parallax follows mouse
+      camera.position.x += (smoothMouseX * 2 - camera.position.x) * 0.02;
+      camera.position.y += (smoothMouseY * 1.5 - camera.position.y) * 0.02;
+      camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
     };

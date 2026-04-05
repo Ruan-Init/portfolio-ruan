@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { ExternalLinkIcon } from "./icons";
 
 const projects = [
   {
@@ -41,33 +42,8 @@ const projects = [
   },
 ];
 
-function ExternalIcon() {
-  return (
-    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.8}>
-      <path strokeLinecap="round" strokeLinejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-    </svg>
-  );
-}
-
 export default function Projects() {
-  const ref = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
-            e.target.querySelectorAll(".animate-on-scroll").forEach((el, i) => {
-              setTimeout(() => el.classList.add("visible"), i * 100);
-            });
-          }
-        });
-      },
-      { threshold: 0.05 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
+  const ref = useScrollReveal({ delay: 100, threshold: 0.05 });
 
   return (
     <section id="projetos" ref={ref} className="relative py-32 px-6">
@@ -127,7 +103,7 @@ export default function Projects() {
                   className="flex-shrink-0 flex items-center gap-2 border border-border text-muted font-mono text-sm px-5 py-2.5 rounded-lg hover:border-accent hover:text-accent transition-all duration-300 self-start"
                 >
                   Ver projeto
-                  <ExternalIcon />
+                  <ExternalLinkIcon />
                 </a>
               </div>
             </div>
@@ -152,7 +128,7 @@ export default function Projects() {
                     rel="noopener noreferrer"
                     className="text-muted hover:text-accent transition-colors duration-200"
                   >
-                    <ExternalIcon />
+                    <ExternalLinkIcon />
                   </a>
                 </div>
                 <h3 className="font-display font-bold text-lg text-white mb-2 group-hover:text-accent transition-colors duration-300">
