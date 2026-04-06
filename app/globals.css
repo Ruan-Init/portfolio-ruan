@@ -16,12 +16,16 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px;
 }
 
 body {
   background: #080A0F;
   color: #E6F1FF;
   overflow-x: hidden;
+  font-smooth: always;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Scrollbar */
@@ -39,15 +43,46 @@ body {
   background: #64FFDA44;
 }
 
+/* Focus visible — accessible outlines */
+*:focus-visible {
+  outline: 2px solid #64FFDA;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Section divider */
+.section-divider {
+  position: relative;
+}
+.section-divider::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    transparent 15%,
+    #1C2030 35%,
+    #64FFDA33 50%,
+    #1C2030 65%,
+    transparent 85%,
+    transparent 100%
+  );
+}
+
 /* Noise texture overlay */
 .noise::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3Cfilter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
   pointer-events: none;
-  z-index: 9999;
-  opacity: 0.03;
+  z-index: 100;
+  opacity: 0.025;
 }
 
 /* Glow utility */
@@ -57,10 +92,17 @@ body {
 
 /* Gradient text */
 .gradient-text {
-  background: linear-gradient(135deg, #64FFDA 0%, #7B9CF7 100%);
+  background: linear-gradient(135deg, #64FFDA 0%, #7B9CF7 50%, #64FFDA 100%);
+  background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: gradientShift 4s ease infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
 }
 
 /* Shimmer effect */
@@ -83,8 +125,8 @@ body {
 /* Section fade animations */
 .animate-on-scroll {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .animate-on-scroll.visible {
@@ -92,7 +134,44 @@ body {
   transform: translateY(0);
 }
 
+/* Skill bar fill animation */
+.animate-on-scroll .skill-bar {
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.animate-on-scroll.visible .skill-bar {
+  transform: scaleX(1);
+}
+
+/* Button ripple on click */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+.btn-ripple::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--ripple-x, 50%) var(--ripple-y, 50%), rgba(100, 255, 218, 0.3) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.btn-ripple:active::after {
+  opacity: 1;
+}
+
 /* Canvas three.js */
 canvas {
   display: block;
+}
+
+/* Prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
