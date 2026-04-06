@@ -1,44 +1,35 @@
 "use client";
 
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { ExternalLinkIcon } from "./icons";
 
 const projects = [
   {
-    number: "01",
+    tag: "Destaque",
     name: "Kainde Tecnologia",
-    description:
-      "Site institucional completo para empresa de TI. Apresenta serviços de infraestrutura, cloud computing, DevOps e desenvolvimento sob medida. Interface bilíngue (PT/EN) com animações fluidas e design profissional.",
-    tags: ["Next.js", "TypeScript", "Tailwind CSS", "i18n"],
+    description: "Site institucional bilíngue com serviços de TI, cloud computing e DevOps.",
+    tech: ["Next.js", "TypeScript", "Tailwind"],
     url: "https://www.kainde.com.br",
-    featured: true,
   },
   {
-    number: "02",
+    tag: "Destaque",
     name: "PMS Enterprise",
-    description:
-      "Dashboard de gerenciamento empresarial (Project Management System). Interface administrativa robusta com visualização de dados, controle de projetos e gestão de equipes em tempo real.",
-    tags: ["React", "Next.js", "TypeScript", "Dashboard"],
+    description: "Dashboard de gerenciamento empresarial com gestão de projetos em tempo real.",
+    tech: ["React", "Next.js", "Dashboard"],
     url: "https://pms-enterprise-v2.vercel.app/dashboard",
-    featured: true,
   },
   {
-    number: "03",
+    tag: null,
     name: "Finance Dashboard",
-    description:
-      "Painel financeiro interativo com gráficos e métricas de desempenho. Visualização clara de receitas, despesas e indicadores financeiros com UI moderna e responsiva.",
-    tags: ["React", "TypeScript", "Charts", "Tailwind"],
+    description: "Painel financeiro interativo com gráficos e métricas.",
+    tech: ["React", "TypeScript", "Charts"],
     url: "https://finance-dashboard-ldp5mw3vj-ruan-inits-projects.vercel.app",
-    featured: false,
   },
   {
-    number: "04",
+    tag: null,
     name: "DataLens",
-    description:
-      "Plataforma de análise e visualização de dados. Interface intuitiva para exploração de datasets com componentes interativos e foco em UX para tomada de decisões orientadas por dados.",
-    tags: ["Next.js", "TypeScript", "Data Viz", "React"],
+    description: "Plataforma de análise e visualização de dados.",
+    tech: ["Next.js", "Data Viz", "React"],
     url: "https://datalens-next-zsed.vercel.app",
-    featured: false,
   },
 ];
 
@@ -46,108 +37,71 @@ export default function Projects() {
   const ref = useScrollReveal({ delay: 100, threshold: 0.05 });
 
   return (
-    <section id="projetos" ref={ref} className="relative py-32 px-6">
+    <section id="projetos" ref={ref} className="relative py-32 px-6 border-t border-white/5">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="animate-on-scroll flex items-center gap-4 mb-16">
-          <span className="font-mono text-accent text-sm">03.</span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white">
+        <div className="animate-on-scroll flex flex-col sm:flex-row sm:items-end gap-4 mb-20">
+          <span className="font-mono text-gold/50 text-xs tracking-[0.3em] uppercase">03</span>
+          <h2 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl tracking-tight text-white">
             Projetos
           </h2>
-          <span className="h-px flex-1 bg-border max-w-xs" />
+          <p className="font-body text-muted text-sm sm:text-base max-w-md sm:ml-8 sm:border-l sm:border-white/10 sm:pl-8">
+            Trabalhos selecionados — cada projeto resolve desafios únicos.
+          </p>
         </div>
 
-        {/* Featured (first 2) */}
-        <div className="space-y-8 mb-12">
-          {projects.filter((p) => p.featured).map((project) => (
+        {/* Projects list */}
+        <div className="space-y-1">
+          {projects.map((project, index) => (
             <div
-              key={project.number}
-              className="animate-on-scroll group relative border border-border rounded-2xl p-8 hover:border-accent/30 transition-all duration-500 overflow-hidden"
+              key={project.name}
+              className="animate-on-scroll group"
+              style={{ animationDelay: `${index * 80}ms` }}
             >
-              {/* Hover gradient */}
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-[#7B9CF7]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-
-              <div className="relative z-10 flex flex-col md:flex-row md:items-start md:justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <span className="font-mono text-accent/50 text-xs">
-                      {project.number}
-                    </span>
-                    <span className="h-px w-8 bg-border" />
-                    <span className="font-mono text-accent text-xs uppercase tracking-widest">
-                      Projeto em destaque
-                    </span>
+              <a
+                href={project.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-8 border-b border-white/5 hover:border-gold/15 transition-all duration-400 group"
+              >
+                {/* Left */}
+                <div className="flex items-center gap-6 sm:gap-10 min-w-0">
+                  <span className="font-mono text-[10px] text-muted/30 shrink-0">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-3 mb-1">
+                      <h3 className="font-display font-bold text-xl sm:text-2xl text-white group-hover:text-gold transition-colors duration-300 truncate">
+                        {project.name}
+                      </h3>
+                      {project.tag && (
+                        <span className="shrink-0 font-mono text-[9px] text-gold/60 border border-gold/20 uppercase tracking-wider px-2 py-0.5 rounded-full">
+                          {project.tag}
+                        </span>
+                      )}
+                    </div>
+                    <p className="font-body text-muted text-sm truncate">
+                      {project.description}
+                    </p>
                   </div>
-                  <h3 className="font-display font-bold text-2xl text-white mb-3 group-hover:text-accent transition-colors duration-300">
-                    {project.name}
-                  </h3>
-                  <p className="font-body text-muted leading-relaxed max-w-xl mb-5">
-                    {project.description}
-                  </p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="font-mono text-xs text-accent/70 border border-accent/20 px-2.5 py-1 rounded"
-                      >
-                        {tag}
+                </div>
+
+                {/* Right */}
+                <div className="flex items-center gap-4 shrink-0">
+                  <div className="hidden sm:flex gap-2">
+                    {project.tech.map((t) => (
+                      <span key={t} className="font-mono text-[10px] text-muted/40 px-2 py-0.5 border border-white/5 rounded">
+                        {t}
                       </span>
                     ))}
                   </div>
+                  <span className="text-muted/30 group-hover:text-gold/60 transition-colors duration-300">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                    </svg>
+                  </span>
                 </div>
-
-                <a
-                  href={project.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-shrink-0 flex items-center gap-2 border border-border text-muted font-mono text-sm px-5 py-2.5 rounded-lg hover:border-accent hover:text-accent transition-all duration-300 self-start"
-                >
-                  Ver projeto
-                  <ExternalLinkIcon />
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Other projects (2 columns) */}
-        <div className="grid sm:grid-cols-2 gap-5">
-          {projects.filter((p) => !p.featured).map((project) => (
-            <div
-              key={project.number}
-              className="animate-on-scroll group relative border border-border rounded-xl p-6 hover:border-accent/30 transition-all duration-400 overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-gradient-to-br from-accent/4 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400 pointer-events-none" />
-
-              <div className="relative z-10">
-                <div className="flex items-start justify-between mb-4">
-                  <span className="font-mono text-accent/40 text-xs">{project.number}</span>
-                  <a
-                    href={project.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-muted hover:text-accent transition-colors duration-200"
-                  >
-                    <ExternalLinkIcon />
-                  </a>
-                </div>
-                <h3 className="font-display font-bold text-lg text-white mb-2 group-hover:text-accent transition-colors duration-300">
-                  {project.name}
-                </h3>
-                <p className="font-body text-muted text-sm leading-relaxed mb-4">
-                  {project.description}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {project.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="font-mono text-xs text-muted/60 border border-border px-2 py-0.5 rounded"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+              </a>
             </div>
           ))}
         </div>

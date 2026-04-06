@@ -3,81 +3,50 @@
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const techs = [
-  {
-    category: "Frontend",
-    items: [
-      { name: "React", level: 95 },
-      { name: "Next.js", level: 92 },
-      { name: "TypeScript", level: 88 },
-      { name: "Tailwind CSS", level: 94 },
-    ],
-  },
-  {
-    category: "Backend & Tools",
-    items: [
-      { name: "Node.js", level: 78 },
-      { name: "Express", level: 75 },
-      { name: "REST APIs", level: 85 },
-      { name: "Git / GitHub", level: 90 },
-    ],
-  },
-];
-
-const badges = [
-  "React", "Next.js", "TypeScript", "Tailwind CSS",
-  "Node.js", "Express", "REST API", "Git",
-  "HTML5", "CSS3", "JavaScript", "Figma",
-  "Vercel", "PostgreSQL", "Prisma", "Docker",
+  { category: "Frontend", items: ["React", "Next.js", "TypeScript", "Tailwind CSS", "HTML5 / CSS3"] },
+  { category: "Backend", items: ["Node.js", "Express", "REST APIs", "PostgreSQL", "Prisma"] },
+  { category: "Dev & Tools", items: ["Git / GitHub", "Docker", "Vercel", "Figma", "VS Code"] },
 ];
 
 export default function Technologies() {
   const ref = useScrollReveal({ delay: 80, threshold: 0.1 });
+  const ref2 = useScrollReveal({ delay: 100, threshold: 0.1 });
 
   return (
     <section id="tecnologias" ref={ref} className="relative py-32 px-6">
-      {/* Subtle background */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse at center, #64FFDA06 0%, transparent 70%)",
-        }}
-        aria-hidden="true"
-      />
-
-      <div className="max-w-6xl mx-auto relative z-10">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <div className="animate-on-scroll flex items-center gap-4 mb-16">
-          <span className="font-mono text-accent text-sm">02.</span>
-          <h2 className="font-display font-bold text-3xl sm:text-4xl text-white">
-            Tecnologias
+        <div className="animate-on-scroll flex flex-col sm:flex-row sm:items-end gap-4 mb-20">
+          <span className="font-mono text-gold/50 text-xs tracking-[0.3em] uppercase">02</span>
+          <h2 className="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl tracking-tight text-white">
+            Stack
           </h2>
-          <span className="h-px flex-1 bg-border max-w-xs" />
+          <p className="font-body text-muted text-sm sm:text-base max-w-md sm:ml-8 sm:border-l sm:border-white/10 sm:pl-8">
+            As ferramentas que uso para transformar ideias em produto.
+          </p>
         </div>
 
-        {/* Skill bars */}
-        <div className="grid md:grid-cols-2 gap-12 mb-20">
+        {/* Tech grid */}
+        <div ref={ref2} className="grid md:grid-cols-3 gap-6 md:gap-8">
           {techs.map((group) => (
-            <div key={group.category}>
-              <h3 className="animate-on-scroll font-mono text-accent text-xs uppercase tracking-widest mb-6">
+            <div
+              key={group.category}
+              className="animate-on-scroll group border border-white/5 rounded-2xl p-8 hover:border-gold/15 transition-all duration-500 hover:bg-white/[0.01]"
+            >
+              <h3 className="font-mono text-[10px] text-gold/40 uppercase tracking-[0.3em] mb-8">
                 {group.category}
               </h3>
-              <div className="space-y-5">
-                {group.items.map((item) => (
-                  <div key={item.name} className="animate-on-scroll">
-                    <div className="flex justify-between mb-1.5">
-                      <span className="font-body text-light text-sm font-medium">
-                        {item.name}
-                      </span>
-                      <span className="font-mono text-accent text-xs">
-                        {item.level}%
-                      </span>
-                    </div>
-                    <div className="h-1.5 bg-border rounded-full overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-accent to-[#7B9CF7] transition-all duration-1000"
-                        style={{ width: `${item.level}%` }}
-                      />
-                    </div>
+
+              <div className="space-y-4">
+                {group.items.map((tech) => (
+                  <div
+                    key={tech}
+                    className="flex items-center justify-between group/item"
+                  >
+                    <span className="font-body text-light group-hover/item:text-white transition-colors duration-200 text-sm">
+                      {tech}
+                    </span>
+                    <div className="w-12 h-px bg-white/5 group-hover/item:bg-gold/30 transition-colors duration-300" />
                   </div>
                 ))}
               </div>
@@ -85,18 +54,14 @@ export default function Technologies() {
           ))}
         </div>
 
-        {/* Tech badges */}
-        <div className="animate-on-scroll">
-          <p className="font-mono text-muted text-xs uppercase tracking-widest mb-6">
-            Ferramentas & Ecossistema
-          </p>
-          <div className="flex flex-wrap gap-3">
-            {badges.map((badge) => (
-              <span
-                key={badge}
-                className="group font-mono text-xs text-muted border border-border px-3 py-1.5 rounded hover:border-accent hover:text-accent transition-all duration-200 cursor-default"
-              >
-                {badge}
+        {/* Marquee */}
+        <div className="mt-24 overflow-hidden" aria-hidden="true">
+          <div className="flex animate-marquee whitespace-nowrap">
+            {[...Array(2)].map((_, i) => (
+              <span key={i} className="flex items-center gap-6 mr-6">
+                {["React", "Next.js", "TypeScript", "Tailwind", "Node.js", "Prisma", "PostgreSQL", "Docker", "Git"].map((t, j) => (
+                  <span key={j} className="font-mono text-xs text-muted/20">{t}</span>
+                ))}
               </span>
             ))}
           </div>

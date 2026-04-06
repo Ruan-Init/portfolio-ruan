@@ -1,3 +1,11 @@
+export function ArrowDownIcon({ className = "w-4 h-4" }: IconProps) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 8.25L12 13.5m0 0L6.75 8.25M12 13.5v7.25" />
+    </svg>
+  );
+}
+
 interface IconProps {
   className?: string;
 }

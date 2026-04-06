@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
-import { LinkedInIcon, GitHubIcon } from "./icons";
 
 const roles = ["Frontend Developer", "React Specialist", "UI Craftsman", "Next.js Dev"];
 
@@ -13,19 +12,16 @@ export default function Hero() {
 
   const typeEffect = useCallback(() => {
     const role = roles[currentRole];
-
     if (!isDeleting) {
       setDisplayedText(role.slice(0, displayedText.length + 1));
       typingSpeed.current = 80;
-
       if (displayedText === role) {
-        typingSpeed.current = 2000;
+        typingSpeed.current = 2500;
         setIsDeleting(true);
       }
     } else {
       setDisplayedText(role.slice(0, displayedText.length - 1));
-      typingSpeed.current = 50;
-
+      typingSpeed.current = 40;
       if (displayedText === "") {
         setIsDeleting(false);
         setCurrentRole((prev) => (prev + 1) % roles.length);
@@ -39,141 +35,103 @@ export default function Hero() {
   }, [typeEffect]);
 
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex flex-col justify-center px-6 pt-16"
-    >
-      {/* Background decorative elements */}
-      <div
-        className="absolute inset-0 z-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            radial-gradient(circle at 80% 50%, #64FFDA08 0%, transparent 60%),
-            radial-gradient(circle at 20% 80%, #7B9CF708 0%, transparent 50%)
-          `,
-        }}
-        aria-hidden="true"
-      />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Decorative ring */}
+      <div className="absolute w-[500px] h-[500px] sm:w-[700px] sm:h-[700px] md:w-[900px] md:h-[900px] border border-white/[0.03] rounded-full animate-[float_8s_ease-in-out_infinite]" aria-hidden="true" />
+      <div className="absolute w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] md:w-[650px] md:h-[650px] border border-gold/[0.06] rounded-full animate-[float_6s_ease-in-out_infinite_reverse]" aria-hidden="true" />
 
-      {/* Corner decorations */}
-      <div className="absolute top-24 right-8 w-20 h-20 border-t border-r border-accent/10 rounded-tr-3xl opacity-40 hidden lg:block" aria-hidden="true" />
-      <div className="absolute bottom-24 left-8 w-20 h-20 border-b border-l border-accent/10 rounded-bl-3xl opacity-40 hidden lg:block" aria-hidden="true" />
-
-      <div className="max-w-6xl mx-auto w-full relative z-10">
-        {/* Top label */}
+      <div className="relative z-10 text-center px-6">
+        {/* Badge */}
         <div
-          className="flex items-center gap-3 mb-8"
+          className="inline-flex items-center gap-2 border border-gold/20 bg-gold/[0.04] rounded-full px-5 py-2 mb-12"
           style={{ animation: "fadeUp 0.7s ease 0.1s both" }}
         >
-          <span className="h-px w-12 bg-gradient-to-r from-accent to-transparent" />
-          <span className="font-mono text-accent text-sm tracking-widest uppercase">
-            Olá, mundo. Eu sou
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-60" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-green-400" />
+          </span>
+          <span className="font-mono text-[10px] text-gold/80 tracking-[0.2em] uppercase">
+            DisponÍvel para projetos
           </span>
         </div>
 
-        {/* Name */}
-        <h1
-          className="font-display font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none text-white mb-4"
-          style={{ animation: "fadeUp 0.7s ease 0.25s both" }}
+        {/* Name - small label */}
+        <p
+          className="font-mono text-xs sm:text-sm text-muted/50 tracking-[0.4em] uppercase mb-4"
+          style={{ animation: "fadeUp 0.7s ease 0.2s both" }}
         >
-          Ruan
+          Desenvolvedor Frontend &middot; Bras&iacute;lia, DF
+        </p>
+
+        {/* Main name */}
+        <h1
+          className="font-display font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.95] tracking-tight mb-8"
+          style={{ animation: "fadeUp 0.8s ease 0.3s both" }}
+        >
+          <span className="text-white">Ruan</span>
           <br />
-          <span className="gradient-text">Espindola</span>
+          <span className="gradient-text">Carlos</span>
         </h1>
 
         {/* Typewriter */}
         <div
-          className="flex items-center gap-3 mb-8 h-10"
-          style={{ animation: "fadeUp 0.7s ease 0.4s both" }}
+          className="flex items-center justify-center gap-3 mb-10 min-h-[2rem]"
+          style={{ animation: "fadeUp 0.8s ease 0.45s both" }}
         >
-          <span className="font-display text-2xl sm:text-3xl text-muted font-medium">
-            { "// " }
+          <span className="font-mono text-sm sm:text-base text-muted">// </span>
+          <span className="font-mono text-sm sm:text-base text-light font-medium tracking-wide">
+            {displayedText}
           </span>
-          <span className="font-display text-2xl sm:text-3xl text-light font-medium min-w-[340px]">
-            { displayedText }
-            <span className="inline-block w-[3px] h-8 bg-accent ml-0.5 animate-pulse rounded-full" aria-hidden="true" />
-          </span>
+          <span className="inline-block w-0.5 h-5 bg-gold animate-pulse rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Bio */}
+        {/* Description */}
         <p
-          className="font-body text-muted text-lg sm:text-xl max-w-2xl leading-relaxed mb-12"
-          style={{ animation: "fadeUp 0.7s ease 0.55s both" }}
+          className="font-body text-muted text-base sm:text-lg max-w-lg mx-auto leading-relaxed mb-10"
+          style={{ animation: "fadeUp 0.8s ease 0.6s both" }}
         >
-          Transformo ideias em interfaces de alto impacto. Especialista em{" "}
-          <span className="text-accent font-medium">React</span>,{" "}
-          <span className="text-accent font-medium">Next.js</span> e{" "}
-          <span className="text-accent font-medium">TypeScript</span> — construindo produtos
-          digitais com foco em performance, usabilidade e design.
+          Interfaces modernas e perform&aacute;ticas com foco em cada
+          detalhe da experi&ecirc;ncia do usu&aacute;rio.
         </p>
 
         {/* CTAs */}
         <div
-          className="group flex flex-wrap items-center gap-4"
-          style={{ animation: "fadeUp 0.7s ease 0.7s both" }}
+          className="flex flex-wrap justify-center gap-4"
+          style={{ animation: "fadeUp 0.8s ease 0.75s both" }}
         >
           <a
             href="#projetos"
-            className="group/btn relative inline-flex items-center gap-2.5 bg-accent text-bg font-display font-bold px-8 py-4 rounded-lg text-sm tracking-wide overflow-hidden transition-all duration-300 hover:shadow-[0_0_40px_#64FFDA44] hover:-translate-y-0.5"
+            className="group inline-flex items-center gap-2 bg-gold text-bg font-display font-bold px-8 py-4 rounded-lg text-sm tracking-wide hover:bg-gold/90 transition-all duration-300"
           >
-            <span className="relative z-10">Ver Projetos</span>
-            <svg className="w-4 h-4 relative z-10 group-hover/btn:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            Ver projetos
+            <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
-            <span className="absolute inset-0 bg-gradient-to-r from-accent to-[#7B9CF7] opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500" />
           </a>
-
           <a
-            href="https://www.linkedin.com/in/ruanespindola/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-border text-light font-display font-medium px-6 py-4 rounded-lg text-sm tracking-wide hover:border-accent hover:text-accent hover:-translate-y-0.5 transition-all duration-300"
+            href="mailto:ruan.espindola17@gmail.com"
+            className="inline-flex items-center gap-2 border border-white/10 text-light font-display font-medium px-8 py-4 rounded-lg text-sm tracking-wide hover:border-gold/50 hover:text-gold transition-all duration-300"
           >
-            <LinkedInIcon className="w-4 h-4" />
-            LinkedIn
-          </a>
-
-          <a
-            href="https://github.com/Ruan-Init"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 border border-border text-light font-display font-medium px-6 py-4 rounded-lg text-sm tracking-wide hover:border-accent hover:text-accent hover:-translate-y-0.5 transition-all duration-300"
-          >
-            <GitHubIcon className="w-4 h-4" />
-            GitHub
+            Fale comigo
           </a>
         </div>
+      </div>
 
-        {/* Stats bar */}
-        <div
-          className="flex flex-wrap gap-12 mt-20 pt-8 border-t border-border/50"
-          style={{ animation: "fadeUp 0.7s ease 0.85s both" }}
-        >
-          {[
-            { value: "3+", label: "Anos de exp." },
-            { value: "40+", label: "Projetos" },
-            { value: "100%", label: "Dedicação" },
-          ].map((stat) => (
-            <div key={stat.label}>
-              <div className="font-display font-extrabold text-2xl text-white mb-0.5">
-                { stat.value }
-              </div>
-              <div className="font-mono text-xs text-muted/60 uppercase tracking-wider">
-                { stat.label }
-              </div>
-            </div>
-          ))}
-        </div>
+      {/* Scroll indicator */}
+      <div
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-30"
+        style={{ animation: "fadeIn 1s ease 2s both" }}
+        aria-hidden="true"
+      >
+        <span className="font-mono text-[9px] text-muted/60 tracking-[0.4em] uppercase">scroll</span>
+        <div className="w-px h-10 bg-gradient-to-b from-gold to-transparent animate-pulse" />
+      </div>
 
-        {/* Scroll indicator */}
-        <div
-          className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-40"
-          style={{ animation: "fadeIn 1s ease 1.5s both" }}
-          aria-hidden="true"
-        >
-          <span className="font-mono text-[10px] text-muted tracking-[0.3em] uppercase">scroll</span>
-          <div className="w-px h-12 bg-gradient-to-b from-accent via-accent/50 to-transparent animate-pulse" />
-        </div>
+      {/* Side decoration */}
+      <div className="hidden lg:flex fixed left-8 top-1/2 -translate-y-1/2 flex-col items-center gap-3 opacity-25 z-30" aria-hidden="true">
+        <div className="w-px h-12 bg-gradient-to-b from-gold/40 to-transparent" />
+        <span className="font-mono text-[9px] text-muted/40 tracking-[0.3em] uppercase rotate-90 whitespace-nowrap">Ruan Espindola — Portfolio</span>
+        <div className="w-px h-12 bg-gradient-to-t from-gold/40 to-transparent" />
       </div>
     </section>
   );

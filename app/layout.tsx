@@ -23,8 +23,8 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://ruanespindola.dev"),
   title: {
-    default: "Ruan Espindola — Desenvolvedor Frontend",
-    template: "%s | Ruan Espindola",
+    default: "Ruan Carlos — Desenvolvedor Frontend",
+    template: "%s | Ruan Carlos",
   },
   description:
     "Desenvolvedor Frontend especializado em React, Next.js e TypeScript. Criando interfaces modernas, performáticas e acessíveis em Brasília, DF.",

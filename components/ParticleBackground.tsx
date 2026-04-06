@@ -9,13 +9,12 @@ export default function ParticleBackground() {
     if (!mountRef.current) return;
 
     const mount = mountRef.current;
-    const W = mount.clientWidth;
-    const H = mount.clientHeight;
+    const W = window.innerWidth;
+    const H = window.innerHeight;
 
-    // Scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(60, W / H, 0.1, 1000);
-    camera.position.z = 30;
+    const camera = new THREE.PerspectiveCamera(75, W / H, 0.1, 1000);
+    camera.position.z = 40;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(W, H);
@@ -23,61 +22,83 @@ export default function ParticleBackground() {
     renderer.setClearColor(0x000000, 0);
     mount.appendChild(renderer.domElement);
 
-    // Particles
-    const count = 1800;
-    const positions = new Float32Array(count * 3);
-    const colors = new Float32Array(count * 3);
-    const sizes = new Float32Array(count);
+    // Mesh torus knot — a geometric ribbon that slowly rotates
+    const knotGeo = new THREE.TorusKnotGeometry(18, 4, 256, 32, 2, 3);
+    const knotMat = new THREE.MeshBasicMaterial({
+      color: 0xc9a44e,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.03,
+    });
+    const knot = new THREE.Mesh(knotGeo, knotMat);
+    scene.add(knot);
 
-    // Store original positions for wave animation
-    const originalY = new Float32Array(count);
-    const phases = new Float32Array(count);
-    const speeds = new Float32Array(count);
+    // Particle ring
+    const ringData: { positions: Float32Array; originalY: Float32Array; phases: Float32Array } = (() => {
+      const count = 1200;
+      const positions = new Float32Array(count * 3);
+      const originalY = new Float32Array(count);
+      const phases = new Float32Array(count);
 
-    const colorA = new THREE.Color("#64FFDA");
-    const colorB = new THREE.Color("#7B9CF7");
-    const colorC = new THREE.Color("#1C2030");
+      for (let i = 0; i < count; i++) {
+        const angle = (i / count) * Math.PI * 2;
+        const radius = 25 + Math.random() * 15;
+        const i3 = i * 3;
+        positions[i3] = Math.cos(angle) * radius;
+        positions[i3 + 1] = (Math.random() - 0.5) * 40;
+        positions[i3 + 2] = Math.sin(angle) * radius;
 
-    for (let i = 0; i < count; i++) {
-      const i3 = i * 3;
-      positions[i3] = (Math.random() - 0.5) * 80;
-      positions[i3 + 1] = (Math.random() - 0.5) * 80;
-      positions[i3 + 2] = (Math.random() - 0.5) * 40;
+        originalY[i] = positions[i3 + 1];
+        phases[i] = Math.random() * Math.PI * 2;
+      }
 
-      originalY[i] = positions[i3 + 1];
-      phases[i] = Math.random() * Math.PI * 2;
-      speeds[i] = Math.random() * 0.5 + 0.3;
+      // Ring points
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
 
-      const t = Math.random();
-      const col = t < 0.3 ? colorA : t < 0.5 ? colorB : colorC;
-      colors[i3] = col.r;
-      colors[i3 + 1] = col.g;
-      colors[i3 + 2] = col.b;
+      const mat = new THREE.PointsMaterial({
+        size: 0.12,
+        color: new THREE.Color("#c9a44e"),
+        transparent: true,
+        opacity: 0.4,
+        sizeAttenuation: true,
+      });
 
-      sizes[i] = Math.random() * 1.5 + 0.3;
+      const points = new THREE.Points(geo, mat);
+      scene.add(points);
+      return { positions, originalY, phases, geo };
+    })();
+
+    // Floating spheres — small glowing orbs
+    const sphereData: { positions: { x: number; y: number; z: number }[]; meshes: THREE.Mesh[] } = { positions: [], meshes: [] };
+
+    const sphereColor = [
+      new THREE.Color("#c9a44e"),
+      new THREE.Color("#6c8ce5"),
+      new THREE.Color("#c9a44e80"),
+    ];
+
+    for (let i = 0; i < 12; i++) {
+      const radius = 0.15 + Math.random() * 0.3;
+      const geo = new THREE.SphereGeometry(radius, 8, 8);
+      const mat = new THREE.MeshBasicMaterial({
+        color: sphereColor[i % sphereColor.length],
+        transparent: true,
+        opacity: 0.08 + Math.random() * 0.12,
+      });
+      const sphere = new THREE.Mesh(geo, mat);
+      const x = (Math.random() - 0.5) * 60;
+      const y = (Math.random() - 0.5) * 40;
+      const z = (Math.random() - 0.5) * 20;
+      sphere.position.set(x, y, z);
+      scene.add(sphere);
+      sphereData.meshes.push(sphere);
+      sphereData.positions.push({ x, y, z });
     }
 
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-    geo.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
-
-    const mat = new THREE.PointsMaterial({
-      size: 0.18,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.7,
-      sizeAttenuation: true,
-    });
-
-    const points = new THREE.Points(geo, mat);
-    scene.add(points);
-
-    // Mouse parallax (smooth lerp)
+    // Mouse
     let mouseX = 0;
     let mouseY = 0;
-    let smoothMouseX = 0;
-    let smoothMouseY = 0;
     const handleMouseMove = (e: MouseEvent) => {
       mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
       mouseY = -(e.clientY / window.innerHeight - 0.5) * 2;
@@ -86,8 +107,8 @@ export default function ParticleBackground() {
 
     // Resize
     const handleResize = () => {
-      const w = mount.clientWidth;
-      const h = mount.clientHeight;
+      const w = window.innerWidth;
+      const h = window.innerHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
@@ -99,31 +120,34 @@ export default function ParticleBackground() {
     let animId: number;
     const animate = () => {
       animId = requestAnimationFrame(animate);
-      frame += 0.003;
+      frame += 0.002;
 
-      // Smooth mouse interpolation
-      smoothMouseX += (mouseX - smoothMouseX) * 0.05;
-      smoothMouseY += (mouseY - smoothMouseY) * 0.05;
+      // Rotate torus knot
+      knot.rotation.y = frame * 0.15;
+      knot.rotation.x = Math.sin(frame * 0.3) * 0.1;
 
-      // Slow rotation
-      points.rotation.y = frame * 0.05 + smoothMouseX * 0.08;
-      points.rotation.x = Math.sin(frame * 0.3) * 0.05 + smoothMouseY * 0.04;
-
-      // Wave motion per particle using original Y positions
-      const pos = geo.attributes.position.array as Float32Array;
-      for (let i = 0; i < count; i++) {
+      // Ring particles — gentle wave
+      const ringPos = ringData.positions;
+      for (let i = 0; i < ringData.originalY.length; i++) {
         const i3 = i * 3;
-        pos[i3 + 1] = originalY[i] + Math.sin(frame * speeds[i] + phases[i]) * 2.5;
-        pos[i3] += Math.cos(frame * 0.5 + phases[i]) * 0.002;
+        ringPos[i3 + 1] = ringData.originalY[i] + Math.sin(frame * 2 + ringData.phases[i]) * 3;
+        ringPos[i3] += Math.cos(frame * 0.5 + ringData.phases[i]) * 0.001;
       }
-      geo.attributes.position.needsUpdate = true;
 
-      // Pulsing opacity
-      mat.opacity = 0.55 + Math.sin(frame * 1.2) * 0.15;
+      if (knot.geometry) {
+        // Only the points need updating
+      }
 
-      // Camera parallax follows mouse
-      camera.position.x += (smoothMouseX * 2 - camera.position.x) * 0.02;
-      camera.position.y += (smoothMouseY * 1.5 - camera.position.y) * 0.02;
+      // Float spheres
+      sphereData.meshes.forEach((s, i) => {
+        const orig = sphereData.positions[i];
+        s.position.y = orig.y + Math.sin(frame * 3 + i * 1.5) * 3;
+        s.position.x = orig.x + Math.cos(frame * 1.5 + i) * 1.5;
+      });
+
+      // Camera parallax
+      camera.position.x += (mouseX * 2 - camera.position.x) * 0.01;
+      camera.position.y += (mouseY * 1.5 - camera.position.y) * 0.01;
       camera.lookAt(0, 0, 0);
 
       renderer.render(scene, camera);
@@ -134,9 +158,9 @@ export default function ParticleBackground() {
       cancelAnimationFrame(animId);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
-      mount.removeChild(renderer.domElement);
-      geo.dispose();
-      mat.dispose();
+      try { mount.removeChild(renderer.domElement); } catch { /* already removed */ }
+      knotGeo.dispose();
+      knotMat.dispose();
       renderer.dispose();
     };
   }, []);
